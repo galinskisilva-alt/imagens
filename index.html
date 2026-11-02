@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus 3D Studio - Catálogo de Impressão 3D</title>
+    <!-- Ícones via FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- CABEÇALHO -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-cube logo-icon"></i>
+            <span>KE<strong>3D</strong></span>
+        </div>
+
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Buscar modelos 3D..." oninput="filterProducts()">
+        </div>
+
+        <button class="btn btn-admin" id="adminToggleBtn" onclick="toggleAdminMode()">
+            <i class="fa-solid fa-lock"></i>
+            <span id="adminBtnText">Área Admin</span>
+        </button>
+    </header>
+
+    <!-- BARRA DE FILTROS -->
+    <div class="filters-container">
+        <div class="category-chips" id="categoryChips">
+            <button class="chip active" data-category="Todos" onclick="setCategoryFilter('Todos')">Todos</button>
+            <button class="chip" data-category="Decorativo" onclick="setCategoryFilter('Decorativo')">Decorativo</button>
+            <button class="chip" data-category="Miniaturas" onclick="setCategoryFilter('Miniaturas')">Miniaturas</button>
+            <button class="chip" data-category="Utilitários" onclick="setCategoryFilter('Utilitários')">Utilitários</button>
+            <button class="chip" data-category="Cosplay" onclick="setCategoryFilter('Cosplay')">Cosplay</button>
+            <button class="chip" data-category="Gadgets" onclick="setCategoryFilter('Gadgets')">Gadgets</button>
+        </div>
+
+        <div class="material-filter">
+            <label for="materialSelect"><i class="fa-solid fa-layer-group"></i> Material:</label>
+            <select id="materialSelect" onchange="filterProducts()"></select>
+        </div>
+    </div>
+
+    <!-- PAINEL DE CONTROLE ADMIN -->
+    <div id="adminBanner" class="admin-banner hidden">
+        <div class="admin-banner-info">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Modo Administrador Ativo</span>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn btn-primary" onclick="openInventoryModal()">
+                <i class="fa-solid fa-palette"></i> Materiais & Cores
+            </button>
+            <label class="btn btn-secondary">
+                <i class="fa-solid fa-images"></i> Subir Várias Fotos
+                <input type="file" id="bulkFileInput" multiple accept="image/*" onchange="handleBulkUpload(event)" style="display:none;">
+            </label>
+            <button class="btn btn-admin" onclick="openAddProductModal()">
+                <i class="fa-solid fa-plus"></i> Novo Modelo
+            </button>
+            <button class="btn btn-secondary" onclick="openChangePinModal()">
+                <i class="fa-solid fa-key"></i> Alterar Senha
+            </button>
+        </div>
+    </div>
+
+    <!-- GRADE DE PRODUTOS -->
+    <main class="catalog-container">
+        <div class="grid" id="productGrid"></div>
+        <div id="noResults" class="no-results hidden">
+            <i class="fa-solid fa-box-open"></i>
+            <p>Nenhum modelo encontrado para esses filtros.</p>
+        </div>
+    </main>
+
+    <!-- MODAL DE ESPECIFICAÇÕES E ORÇAMENTO (CLIENTE) -->
+    <div id="specModal" class="modal-overlay hidden">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeSpecModal()">&times;</button>
+            
+            <div class="modal-grid">
+                <div class="modal-image-col">
+                    <img id="modalImage" src="" alt="Modelo 3D">
+                    <div id="modalBadge" class="stock-badge">Disponível</div>
+                </div>
+
+                <div class="modal-info-col">
+                    <span id="modalCategory" class="badge-category">Categoria</span>
+                    <h2 id="modalTitle">Nome do Modelo</h2>
+
+                    <!-- Ficha Técnica -->
+                    <div class="tech-specs-grid">
+                        <div class="spec-item">
+                            <i class="fa-solid fa-ruler-combined"></i>
+                            <div>
+                                <small>Dimensões</small>
+                                <strong id="specDimensions">-</strong>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fa-solid fa-weight-hanging"></i>
+                            <div>
+                                <small>Peso Estimado</small>
+                                <strong id="specWeight">-</strong>
+                            </div>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fa-solid fa-clock"></i>
+                            <div>
+                                <small>Tempo de Impressão</small>
+                                <strong id="specTime">-</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opções Personalizáveis -->
+                    <div class="customization-section">
+                        <div class="form-group">
+                            <label>Escala do Modelo (% do tamanho original):</label>
+                            <div class="scale-selector">
+                                <button onclick="setScale(75)">75%</button>
+                                <button class="active" id="scale100Btn" onclick="setScale(100)">100%</button>
+                                <button onclick="setScale(125)">125%</button>
+                                <button onclick="setScale(150)">150%</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="modalMaterialSelect">Filamento / Material Disponível:</label>
+                            <select id="modalMaterialSelect"></select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cor do Filamento Disponível:</label>
+                            <div id="colorSwatchesContainer" class="color-swatches-grid"></div>
+                            <input type="hidden" id="selectedColorInput">
+                        </div>
+                    </div>
+
+                    <!-- Preço e Botão WhatsApp -->
+                    <div class="modal-footer">
+                        <div class="price-container">
+                            <small>Valor Estimado:</small>
+                            <div class="price-value" id="modalPrice">R$ 0,00</div>
+                        </div>
+                        <button class="btn btn-whatsapp" onclick="sendWhatsAppOrder()">
+                            <i class="fa-brands fa-whatsapp"></i> Fazer Pedido via WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE GERENCIAMENTO DE ESTOQUE (MATERIAIS E CORES) -->
+    <div id="inventoryModal" class="modal-overlay hidden">
+        <div class="modal-card medium-modal">
+            <button class="modal-close" onclick="closeInventoryModal()">&times;</button>
+            <h3>Gerenciador de Materiais e Cores em Estoque</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                Adicione ou remova as cores e tipos de filamentos disponíveis para os seus clientes escolherem.
+            </p>
+
+            <div class="form-row">
+                <!-- COLUNA DE FILAMENTOS -->
+                <div class="form-group flex-1">
+                    <label><strong>Tipos de Filamentos Disponíveis</strong></label>
+                    <div id="adminMaterialsList" class="inventory-list"></div>
+                    <div class="inventory-add-form">
+                        <input type="text" id="newMaterialInput" placeholder="Ex: PETG, TPU...">
+                        <button class="btn btn-primary" onclick="addMaterial()"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <!-- COLUNA DE CORES -->
+                <div class="form-group flex-1">
+                    <label><strong>Cores Disponíveis (com Paleta)</strong></label>
+                    <div id="adminColorsList" class="inventory-list"></div>
+                    <div class="inventory-add-form">
+                        <input type="text" id="newColorNameInput" placeholder="Nome da cor (ex: Azul)" class="flex-1">
+                        <input type="color" id="newColorHexInput" value="#38bdf8" title="Escolha a cor">
+                        <button class="btn btn-primary" onclick="addColor()"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PIN ADMIN -->
+    <div id="pinModal" class="modal-overlay hidden">
+        <div class="modal-card small-modal">
+            <button class="modal-close" onclick="closePinModal()">&times;</button>
+            <h3>Acesso Administrativo</h3>
+            <p>Digite a senha de segurança para gerenciar o acervo:</p>
+            <input type="password" id="pinInput" placeholder="Digite a senha de admin" maxlength="20">
+            <div id="pinError" class="error-msg hidden">Senha incorreta. Tente novamente.</div>
+            <button class="btn btn-primary btn-full" onclick="verifyPin()">Entrar no Painel</button>
+        </div>
+    </div>
+
+    <!-- MODAL ALTERAR SENHA ADMIN -->
+    <div id="changePinModal" class="modal-overlay hidden">
+        <div class="modal-card small-modal">
+            <button class="modal-close" onclick="closeChangePinModal()">&times;</button>
+            <h3>Alterar Senha do Admin</h3>
+            <p>Digite a nova senha de acesso:</p>
+            <input type="password" id="newPinInput" placeholder="Nova senha" maxlength="20">
+            <button class="btn btn-primary btn-full" style="margin-top: 15px;" onclick="saveNewPin()">Salvar Nova Senha</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE CADASTRO / EDIÇÃO DE MODELO -->
+    <div id="productFormModal" class="modal-overlay hidden">
+        <div class="modal-card medium-modal">
+            <button class="modal-close" onclick="closeProductFormModal()">&times;</button>
+            <h3 id="formModalTitle">Cadastrar Novo Modelo 3D</h3>
+            
+            <form id="productForm" onsubmit="saveProduct(event)">
+                <input type="hidden" id="formProductId">
+
+                <div class="form-row">
+                    <div class="form-group flex-2">
+                        <label>Título do Modelo *</label>
+                        <input type="text" id="formTitle" required placeholder="Ex: urso1 polar">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Preço Base (100%) R$ *</label>
+                        <input type="number" step="0.01" id="formPrice" required placeholder="50.00">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label>Categoria *</label>
+                        <select id="formCategory">
+                            <option value="Decorativo">Decorativo</option>
+                            <option value="Miniaturas">Miniaturas</option>
+                            <option value="Utilitários">Utilitários</option>
+                            <option value="Cosplay">Cosplay</option>
+                            <option value="Gadgets">Gadgets</option>
+                        </select>
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Filamento Padrão *</label>
+                        <select id="formMaterial"></select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label>Dimensões (100%)</label>
+                        <input type="text" id="formDimensions" placeholder="Ex: 10 x 10 x 10 cm">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Peso Estimado (100%)</label>
+                        <input type="text" id="formWeight" placeholder="Ex: 100g">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label>Tempo Impressão (100%)</label>
+                        <input type="text" id="formTime" placeholder="Ex: 4h ou 4h 30m">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Imagem do Modelo *</label>
+                    <div class="image-input-options">
+                        <input type="url" id="formImageUrl" placeholder="Cole a URL da imagem..." oninput="previewUrlImage()">
+                        <span class="divider-text">OU</span>
+                        <label class="file-upload-btn">
+                            <i class="fa-solid fa-upload"></i> Enviar Foto
+                            <input type="file" id="formFileInput" accept="image/*" onchange="handleFileUpload(event)">
+                        </label>
+                    </div>
+                    <div class="image-preview-box">
+                        <img id="formImagePreview" class="hidden" src="" alt="Pré-visualização">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeProductFormModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Modelo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JS EXTERNO -->
+    <script src="script.js"></script>
+</body>
+</html>
