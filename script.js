@@ -4,15 +4,39 @@
 const DEFAULT_CATALOG = [
     {
         id: "1",
-        title: "urso1 polar",
+        title: "Ursinho Polar Articulado",
         category: "Decorativo",
         material: "PLA",
-        price: 50.00,
+        price: 45.00,
         inStock: true,
         dimensions: "10 x 10 x 10 cm",
         printTime: "4h",
-        weight: "100g",
+        weight: "95g",
         image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+        id: "2",
+        title: "Busto Futurista Cyberpunk",
+        category: "Decorativo",
+        material: "Resina UV",
+        price: 110.00,
+        inStock: true,
+        dimensions: "12 x 10 x 18 cm",
+        printTime: "10h",
+        weight: "160g",
+        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800"
+    },
+    {
+        id: "3",
+        title: "Suporte Headset Gamer",
+        category: "Utilitários",
+        material: "PETG",
+        price: 65.00,
+        inStock: true,
+        dimensions: "14 x 12 x 24 cm",
+        printTime: "7h 30m",
+        weight: "210g",
+        image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&q=80&w=800"
     }
 ];
 
@@ -40,7 +64,7 @@ let selectedScale = 100;
 let selectedColorName = "";
 let currentImageData = "";
 
-// Inicialização
+// Inicialização ao carregar a página
 window.addEventListener("DOMContentLoaded", () => {
     loadCatalog();
     loadInventory();
@@ -152,18 +176,15 @@ function renderMaterialDropdowns() {
     const formSelect = document.getElementById("formMaterial");
     const modalSelect = document.getElementById("modalMaterialSelect");
 
-    // Select de filtro principal
     if (filterSelect) {
         filterSelect.innerHTML = `<option value="Todos">Todos os Materiais</option>` +
             availableMaterials.map(m => `<option value="${m}">${m}</option>`).join("");
     }
 
-    // Select do formulário de cadastro/edição admin
     if (formSelect) {
         formSelect.innerHTML = availableMaterials.map(m => `<option value="${m}">${m}</option>`).join("");
     }
 
-    // Select da modal do cliente
     if (modalSelect) {
         modalSelect.innerHTML = availableMaterials.map(m => `<option value="${m}">${m}</option>`).join("");
     }
@@ -263,7 +284,6 @@ function renderColorSwatches() {
         return;
     }
 
-    // Seleciona a primeira cor por padrão se nenhuma estiver selecionada
     selectedColorName = availableColors[0].name;
 
     availableColors.forEach((c, idx) => {
@@ -318,7 +338,7 @@ function updateScaleUI() {
 function sendWhatsAppOrder() {
     if (!selectedProduct) return;
 
-    const phone = "5511999999999"; // <-- COLOQUE SEU WHATSAPP AQUI
+    const phone = "5511999999999"; // <-- Digite o seu número com DDD aqui
     const chosenMaterial = document.getElementById("modalMaterialSelect").value;
     
     const priceFactor = selectedScale / 100;
@@ -355,7 +375,6 @@ function closeInventoryModal() {
 }
 
 function renderInventoryLists() {
-    // Renderiza Lista de Materiais
     const matList = document.getElementById("adminMaterialsList");
     matList.innerHTML = availableMaterials.map((m, index) => `
         <div class="inventory-item">
@@ -364,7 +383,6 @@ function renderInventoryLists() {
         </div>
     `).join("");
 
-    // Renderiza Lista de Cores
     const colList = document.getElementById("adminColorsList");
     colList.innerHTML = availableColors.map((c, index) => `
         <div class="inventory-item">
