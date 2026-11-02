@@ -48,7 +48,8 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadCatalog() {
-    const saved = localStorage.getItem("nexus_3d_catalog");
+    // Mudamos o nome da chave para _v2 para forçar o celular a carregar os novos dados
+    const saved = localStorage.getItem("nexus_3d_catalog_v2");
     if (saved) {
         catalog = JSON.parse(saved);
     } else {
@@ -58,7 +59,7 @@ function loadCatalog() {
 }
 
 function saveCatalog() {
-    localStorage.setItem("nexus_3d_catalog", JSON.stringify(catalog));
+    localStorage.setItem("nexus_3d_catalog_v2", JSON.stringify(catalog));
 }
 
 function loadInventory() {
