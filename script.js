@@ -4,19 +4,19 @@
 const DEFAULT_CATALOG = [
     {
         id: "1",
-        title: "Ursinho Polar Articulado",
+        title: "Urso Polar Articulado",
         category: "Decorativo",
         material: "PLA",
-        price: 45.00,
+        price: 50.00,
         inStock: true,
         dimensions: "10 x 10 x 10 cm",
         printTime: "4h",
-        weight: "95g",
-        image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=800"
+        weight: "100g",
+        image: "imagens/urso-polar.jpg" // <-- Caminho da foto na pasta
     },
     {
         id: "2",
-        title: "Busto Futurista Cyberpunk",
+        title: "Busto Cyberpunk",
         category: "Decorativo",
         material: "Resina UV",
         price: 110.00,
@@ -24,33 +24,8 @@ const DEFAULT_CATALOG = [
         dimensions: "12 x 10 x 18 cm",
         printTime: "10h",
         weight: "160g",
-        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-        id: "3",
-        title: "Suporte Headset Gamer",
-        category: "Utilitários",
-        material: "PETG",
-        price: 65.00,
-        inStock: true,
-        dimensions: "14 x 12 x 24 cm",
-        printTime: "7h 30m",
-        weight: "210g",
-        image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&q=80&w=800"
+        image: "imagens/busto-cyberpunk.jpg"
     }
-];
-
-const DEFAULT_MATERIALS = ["PLA", "PETG", "ABS", "Resina UV", "Flexível (TPU)"];
-
-const DEFAULT_COLORS = [
-    { name: "Preto Matte", hex: "#1e1e1e" },
-    { name: "Branco Puríssimo", hex: "#ffffff" },
-    { name: "Cinza Espacial", hex: "#6b7280" },
-    { name: "Vermelho Rubi", hex: "#ef4444" },
-    { name: "Azul Cobalto", hex: "#2563eb" },
-    { name: "Dourado Silk", hex: "#d97706" },
-    { name: "Cobre Silk", hex: "#b45309" },
-    { name: "Verde Menta", hex: "#10b981" }
 ];
 
 // Estado Global
