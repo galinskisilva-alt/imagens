@@ -1,5 +1,5 @@
 // ==========================================
-// 1. DADOS INICIAIS, ESTOQUE & PERSISTÊNCIA
+// 1. DADOS INICIAIS COM TODAS AS SUAS PEÇAS
 // ==========================================
 const DEFAULT_CATALOG = [
     {
@@ -11,8 +11,8 @@ const DEFAULT_CATALOG = [
         inStock: true,
         dimensions: "10 x 10 x 10 cm",
         printTime: "4h",
-        weight: "100g",
-        image: "imagens/urso-polar.jpg" // <-- Caminho da foto na pasta
+        weight: "95g",
+        image: "./imagens/urso-polar.jpg" // <-- Atenção ao nome exato do arquivo no GitHub
     },
     {
         id: "2",
@@ -24,7 +24,19 @@ const DEFAULT_CATALOG = [
         dimensions: "12 x 10 x 18 cm",
         printTime: "10h",
         weight: "160g",
-        image: "imagens/busto-cyberpunk.jpg"
+        image: "./imagens/busto-cyberpunk.jpg"
+    },
+    {
+        id: "3",
+        title: "Nome da Sua Terceira Peça",
+        category: "Utilitários",
+        material: "PETG",
+        price: 65.00,
+        inStock: true,
+        dimensions: "15 x 15 x 15 cm",
+        printTime: "6h",
+        weight: "120g",
+        image: "./imagens/nome-da-foto3.jpg" // <-- Adicione quantas peças precisar aqui
     }
 ];
 
@@ -48,8 +60,8 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadCatalog() {
-    // Mudamos o nome da chave para _v2 para forçar o celular a carregar os novos dados
-    const saved = localStorage.getItem("nexus_3d_catalog_v2");
+    // Trocamos para v3 para forçar o celular a atualizar os dados salvos
+    const saved = localStorage.getItem("nexus_3d_catalog_v3");
     if (saved) {
         catalog = JSON.parse(saved);
     } else {
@@ -59,9 +71,8 @@ function loadCatalog() {
 }
 
 function saveCatalog() {
-    localStorage.setItem("nexus_3d_catalog_v2", JSON.stringify(catalog));
+    localStorage.setItem("nexus_3d_catalog_v3", JSON.stringify(catalog));
 }
-
 function loadInventory() {
     const savedMat = localStorage.getItem("nexus_3d_materials");
     const savedCol = localStorage.getItem("nexus_3d_colors");
